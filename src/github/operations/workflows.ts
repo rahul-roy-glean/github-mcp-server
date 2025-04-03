@@ -31,16 +31,42 @@ export const ListWorkflowRunsSchema = z.object({
   page: z.number().optional().describe("Page number of the results")
 });
 
+export const ListCIWorkflowRunsSchema = z.object({
+  branch: z.string().optional().describe("Filter by branch name"),
+  actor: z.string().optional().describe("Filter by GitHub username who triggered the workflow"),
+  event: z.string().optional().describe("Filter by event type that triggered the workflow (e.g., push, pull_request)"),
+  status: WorkflowRunStatus.optional().describe("Filter by workflow status"),
+  per_page: z.number().optional().describe("Results per page (max 100)"),
+  page: z.number().optional().describe("Page number of the results")
+});
+
 export const GetWorkflowRunSchema = z.object({
   run_id: z.number().describe("The ID of the workflow run"),
   owner: z.string().optional().describe("Repository owner (username or organization). If not provided, uses GITHUB_OWNER env var."),
   repo: z.string().optional().describe("Repository name. If not provided, uses GITHUB_REPO env var.")
 });
 
+export const GetCIWorkflowRunSchema = z.object({
+  run_id: z.number().describe("The ID of the workflow run"),
+});
+
 export const ListWorkflowRunsByWorkflowIdSchema = z.object({
   owner: z.string().optional().describe("Repository owner (username or organization). If not provided, uses GITHUB_OWNER env var."),
   repo: z.string().optional().describe("Repository name. If not provided, uses GITHUB_REPO env var."),
   workflow_id: z.string().optional().describe("The ID of the workflow or filename. If not provided, uses GITHUB_WORKFLOW_ID env var."),
+  branch: z.string().optional().describe("Filter by branch name"),
+  actor: z.string().optional().describe("Filter by GitHub username who triggered the workflow"),
+  event: z.string().optional().describe("Filter by event type that triggered the workflow"),
+  status: WorkflowRunStatus.optional().describe("Filter by workflow status"),
+  created: z.string().optional().describe("Date range filter (e.g., '>=2020-01-01')"),
+  exclude_pull_requests: z.boolean().optional().describe("If true, excludes workflow runs triggered by pull requests"),
+  check_suite_id: z.number().optional().describe("Filter by check suite ID"),
+  head_sha: z.string().optional().describe("Only returns workflow runs associated with this SHA"),
+  per_page: z.number().optional().describe("Results per page (max 100)"),
+  page: z.number().optional().describe("Page number of the results")
+});
+
+export const GetCIWorkflowRunsByBranchSchema = z.object({
   branch: z.string().optional().describe("Filter by branch name"),
   actor: z.string().optional().describe("Filter by GitHub username who triggered the workflow"),
   event: z.string().optional().describe("Filter by event type that triggered the workflow"),

@@ -30,6 +30,7 @@ import { VERSION } from "./common/version.js";
 import * as workflows from './operations/workflows.js';
 import * as downloader from './operations/downloader.js';
 import * as logAnalyzer from './operations/workflow-logs.js';
+import * as ciworkflows from './operations/ci_workflows.js';
 
 // If fetch doesn't exist in global scope, add it
 if (!globalThis.fetch) {
@@ -233,6 +234,26 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         name: "analyze_workflow_logs",
         description: "Download, extract, and analyze workflow logs for Bazel build and test errors",
         inputSchema: zodToJsonSchema(logAnalyzer.AnalyzeWorkflowLogsSchema),
+      },
+      {
+        name: "list_ci_workflow_runs",
+        description: "List CI workflow runs for a GitHub repository",
+        inputSchema: zodToJsonSchema(workflows.ListWorkflowRunsSchema),
+      },
+      {
+        name: "get_ci_details_for_workflow_run",
+        description: "Get details of a specific CI workflow run",
+        inputSchema: zodToJsonSchema(workflows.GetWorkflowRunSchema),
+      },
+      {
+        name: "get_ci_workflow_run_for_branch",
+        description: "List CI workflow runs for a specific branch",
+        inputSchema: zodToJsonSchema(workflows.ListWorkflowRunsByWorkflowIdSchema),
+      },
+      {
+        name: "get_ci_workflow_run_logs",
+        description: "Get the download URL for CI workflow run logs",
+        inputSchema: zodToJsonSchema(workflows.GetWorkflowRunLogsSchema),
       },
     ],
   };
@@ -569,6 +590,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const result = await logAnalyzer.analyzeWorkflowLogs(args);
         return {
           content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "list_ci_workflow_runs": {
+        const args = workflows.ListCIWorkflowRunsSchema.parse(request.params.arguments);
+        const results = await ciworkflows.listCiWorkflowRuns(args);
+        return {
+          content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
+        };
+      }
+
+      case "get_ci_details_for_workflow_run": {
+        const args = workflows.GetCIWorkflowRunSchema.parse(request.params.arguments);
+        const result = await ciworkflows.getCiWorkflowRun(args);
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "get_ci_workflow_run_for_branch": {
+        const args = workflows.GetCIWorkflowRunsByBranchSchema.parse(request.params.arguments);
+        const results = await ciworkflows.listCiWorkflowRunsForBranch(args);
+        return {
+          content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
         };
       }
       
