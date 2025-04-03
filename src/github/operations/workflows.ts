@@ -40,7 +40,7 @@ export const GetWorkflowRunSchema = z.object({
 export const ListWorkflowRunsByWorkflowIdSchema = z.object({
   owner: z.string().optional().describe("Repository owner (username or organization). If not provided, uses GITHUB_OWNER env var."),
   repo: z.string().optional().describe("Repository name. If not provided, uses GITHUB_REPO env var."),
-  workflow_id: z.union([z.string(), z.number()]).optional().describe("The ID of the workflow or filename. If not provided, uses GITHUB_WORKFLOW_ID env var."),
+  workflow_id: z.string().optional().describe("The ID of the workflow or filename. If not provided, uses GITHUB_WORKFLOW_ID env var."),
   branch: z.string().optional().describe("Filter by branch name"),
   actor: z.string().optional().describe("Filter by GitHub username who triggered the workflow"),
   event: z.string().optional().describe("Filter by event type that triggered the workflow"),
